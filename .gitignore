@@ -1,0 +1,18 @@
+# Ignore all .venv directories
+.venv/
+# Ignore all node_modules directories
+node_modules/
+# Ignore all build directories
+build/
+# Ignore all dist directories
+dist/
+# Ignore .env files
+.env
+# Ignore all pdf files
+*.pdf
+# Ignore all txt files
+*.txt
+# Ignore the backend/uploads directory
+backend/uploads/
+# Ignore the pycache directory
+__pycache__/
