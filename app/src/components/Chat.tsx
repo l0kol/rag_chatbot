@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { getAgentStatus } from "../api/AgentApi";
 
 type Message = {
   role: "user" | "ai";
@@ -12,7 +13,26 @@ const Chat: React.FC<{
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const data = await getAgentStatus();
+        setStatus(data);
+      } catch (error) {
+        console.error("Error fetching agent status:", error);
+        setStatus("Error fetching status");
+      }
+    };
+
+    fetchStatus();
+  }, []);
+
+  useEffect(() => {
+    console.log("Agent status:", status);
+  }, [status]);
 
   const handleSend = async () => {
     if (!input.trim() && !file) return;
@@ -55,8 +75,25 @@ const Chat: React.FC<{
 
   return (
     <div className="w-full max-w-2xl mx-auto flex flex-col flex-grow">
+      <div className="flex items-center mb-2">
+        <div
+          className={`h-3 w-3 rounded-full mr-2 ${
+            status === "Ready" ? "bg-green-500" : "bg-gray-400"
+          }`}
+          title={`Agent status: ${status}`}
+        />
+        <span className="text-sm text-gray-700">
+          Agent:{" "}
+          {status === "ready" ? "Ready" : status ?? "Please upload files first"}
+        </span>
+      </div>
       {/* Message container */}
-      <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-white shadow-sm">
+      <div
+        className={`flex-1 overflow-y-auto border rounded-lg p-4 bg-white shadow-sm transition-opacity scroll-smooth ${
+          status !== "Ready" ? "opacity-50 pointer-events-none" : ""
+        }`}
+        style={{ maxHeight: "calc(100vh - 200px)" }}
+      >
         {messages.map((msg, i) => (
           <div
             key={i}
@@ -77,6 +114,14 @@ const Chat: React.FC<{
         ))}
         {loading && <div className="text-gray-500 italic">Thinking...</div>}
         <div ref={bottomRef} />
+        {status !== "Ready" && (
+          <div className="flex items-center justify-center">
+            <div className="bg-white/80 text-center px-4 py-3 rounded shadow text-gray-800 text-sm">
+              The agent is not ready. Please upload a file using the button on
+              the right to activate it.
+            </div>
+          </div>
+        )}
       </div>
       <div className="flex mt-4 gap-2 items-center">
         <input

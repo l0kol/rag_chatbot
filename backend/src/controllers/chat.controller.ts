@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   handleQuestion,
   uploadFileToAgentFAISS,
+  getAgentDBStatus,
 } from "../services/chat.services";
 
 export const askQuestionWithFile = async (req: Request, res: Response) => {
@@ -36,5 +37,16 @@ export const uploadFile = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("uploadFile error:", err);
     res.status(500).json({ error: "Failed to upload file" });
+  }
+};
+
+export const getAgentStatus = async (req: Request, res: Response) => {
+  try {
+    const status = await getAgentDBStatus();
+    console.log("Agent status:", status);
+    res.json({ status });
+  } catch (err) {
+    console.error("getAgentStatus error:", err);
+    res.status(500).json({ error: "Failed to get agent status" });
   }
 };

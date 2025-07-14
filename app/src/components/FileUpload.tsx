@@ -28,8 +28,12 @@ const FileUpload: React.FC = () => {
   return (
     <div>
       <h2 className="text-lg font-semibold mb-2">Upload Documents</h2>
+      <p className="text-xs text-gray-500 mb-2">
+        You can add multiple files by uploading them one after another.
+      </p>
       <label className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50">
-        Choose File
+        {!loading && <p className="text-sm text-gray-500">Choose File(s)</p>}
+        {loading && <p className="text-sm text-gray-500">Uploading...</p>}
         <input
           type="file"
           accept=".txt,.pdf"
@@ -37,10 +41,11 @@ const FileUpload: React.FC = () => {
           className="hidden"
         />
       </label>
-      {loading && <p className="text-sm text-gray-500">Uploading...</p>}
+
       {message && <p className="text-sm text-green-600">{message}</p>}
 
       <div className="mt-4">
+        <hr className="my-2 border-gray-300" />
         <h3 className="text-sm font-medium mb-1">Uploaded Files</h3>
         <ul className="text-sm list-disc list-inside text-gray-700">
           {uploadedFiles.map((filename, i) => (

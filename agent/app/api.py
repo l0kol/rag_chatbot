@@ -45,9 +45,17 @@ async def upload_file(file: UploadFile = File(...)):
     with open(file_path, "wb") as out_file:
         shutil.copyfileobj(file.file, out_file)
 
-    # Rebuild vectorstore
+    # Rebuild vectorstore and persist
     build_vectorstore_from_file(str(file_path))
 
+    # Reload QA chain with updated vectorstore
     load_qa()
 
     return {"message": f"{file.filename} processed and added to vector store."}
+
+
+@router.get("/status")
+async def status():
+    if qa is None:
+        return {"status": "Not ready"}
+    return {"status": "Ready"}

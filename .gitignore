@@ -14,5 +14,7 @@ dist/
 *.txt
 # Ignore the backend/uploads directory
 backend/uploads/
+agent/chroma_db/
+agent/faiss/index/
 # Ignore the pycache directory
 __pycache__/

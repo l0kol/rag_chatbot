@@ -44,3 +44,13 @@ export const uploadFileToAgentFAISS = async (
     throw new Error("Failed to upload file");
   }
 };
+
+export const getAgentDBStatus = async (): Promise<string> => {
+  try {
+    const response = await axios.get("http://localhost:8000/agent/status");
+    return response.data.status;
+  } catch (error) {
+    console.error("Error getting agent status:", error);
+    throw new Error("Failed to get agent status");
+  }
+};
