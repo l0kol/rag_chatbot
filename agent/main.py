@@ -1,6 +1,6 @@
 from app import config
 from fastapi import FastAPI
-from app.api import router as api_router
+from app.routes import router
 
 app = FastAPI()
-app.include_router(api_router, prefix="/agent")
+app.include_router(router, prefix="/agent")

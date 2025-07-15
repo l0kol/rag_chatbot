@@ -1,6 +1,3 @@
-// src/components/Navbar.tsx
-import React from "react";
-
 const Navbar: React.FC = () => {
   return (
     <nav className="bg-white shadow-md p-4">

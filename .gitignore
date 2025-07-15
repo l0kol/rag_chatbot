@@ -15,6 +15,9 @@ dist/
 # Ignore the backend/uploads directory
 backend/uploads/
 agent/chroma_db/
-agent/faiss/index/
+agent/faiss/index/  
 # Ignore the pycache directory
 __pycache__/
+# Ignore the data directory
+data/
+temp_uploads/

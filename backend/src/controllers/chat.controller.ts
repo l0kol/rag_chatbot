@@ -1,21 +1,23 @@
 import { Request, Response } from "express";
 import {
   handleQuestion,
-  uploadFileToAgentFAISS,
+  uploadFileToAgentVS,
   getAgentDBStatus,
+  getUserDocsFromDB,
 } from "../services/chat.services";
 
 export const askQuestionWithFile = async (req: Request, res: Response) => {
   const question = req.body.question;
+  const userId = req.body.user_id;
 
-  if (!question) {
-    return res.status(400).json({ error: "Question is required" });
+  if (!question || !userId) {
+    return res.status(400).json({ error: "Question and user_id are required" });
   }
 
   try {
     console.log("Received question:", question);
 
-    const answer = await handleQuestion(question);
+    const answer = await handleQuestion(question, userId);
     res.json({ answer });
   } catch (err) {
     console.error("askQuestionWithFile error:", err);
@@ -24,15 +26,17 @@ export const askQuestionWithFile = async (req: Request, res: Response) => {
 };
 
 export const uploadFile = async (req: Request, res: Response) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "File is required" });
+  const userId = req.body.user_id;
+
+  if (!req.file || !userId) {
+    return res.status(400).json({ error: "File and user_id are required" });
   }
 
   try {
     const file = req.file;
-    console.log("Received file:", req.file.originalname);
+    console.log("Received file:", file.originalname, "from user:", userId);
 
-    const result = await uploadFileToAgentFAISS(file);
+    const result = await uploadFileToAgentVS(file, userId);
     res.json({ message: result });
   } catch (err) {
     console.error("uploadFile error:", err);
@@ -42,11 +46,31 @@ export const uploadFile = async (req: Request, res: Response) => {
 
 export const getAgentStatus = async (req: Request, res: Response) => {
   try {
-    const status = await getAgentDBStatus();
+    const userId = req.query.user_id as string;
+    if (!userId) {
+      return res.status(400).json({ error: "user_id is required" });
+    }
+
+    const status = await getAgentDBStatus(userId);
     console.log("Agent status:", status);
     res.json({ status });
   } catch (err) {
     console.error("getAgentStatus error:", err);
     res.status(500).json({ error: "Failed to get agent status" });
+  }
+};
+
+export const getUserDocs = async (req: Request, res: Response) => {
+  try {
+    const userId = req.query.user_id as string;
+    if (!userId) {
+      return res.status(400).json({ error: "user_id is required" });
+    }
+
+    const docs = await getUserDocsFromDB(userId);
+    res.json({ docs });
+  } catch (err) {
+    console.error("getUserDocs error:", err);
+    res.status(500).json({ error: "Failed to get user documents" });
   }
 };

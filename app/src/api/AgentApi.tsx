@@ -1,10 +1,13 @@
+import { getOrCreateUserId } from "../utils/user";
+
 export async function askAgent(question: string): Promise<string> {
+  const userId = getOrCreateUserId();
   const response = await fetch("http://localhost:3001/api/ask", {
     method: "POST",
     headers: {
       "Content-Type": "application/json", // ← This makes req.body work
     },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, user_id: userId }),
   });
 
   if (!response.ok) {
@@ -16,9 +19,12 @@ export async function askAgent(question: string): Promise<string> {
   return data.answer;
 }
 export async function uploadFileToAgent(file: File): Promise<string> {
+  const userId = getOrCreateUserId();
+
   const formData = new FormData();
   console.log("Uploading file:", file.name);
   formData.append("file", file);
+  formData.append("user_id", userId);
 
   const response = await fetch("http://localhost:3001/api/upload", {
     method: "POST",
@@ -35,19 +41,43 @@ export async function uploadFileToAgent(file: File): Promise<string> {
 }
 
 export async function getAgentStatus(): Promise<string> {
-  console.log("Fetching agent status in api tsx...");
-  const response = await fetch("http://localhost:3001/api/status", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+  const userId = getOrCreateUserId();
+
+  const response = await fetch(
+    `http://localhost:3001/api/status?user_id=${userId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error("Failed to get agent status");
   }
 
   const data = await response.json();
-  console.log("Response JSON:", data);
   return data.status;
+}
+
+export async function getUserDocs(): Promise<string[]> {
+  const userId = getOrCreateUserId();
+
+  const response = await fetch(
+    `http://localhost:3001/api/user_docs?user_id=${userId}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get user documents");
+  }
+
+  const data = await response.json();
+  return data.docs || [];
 }

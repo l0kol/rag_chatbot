@@ -1,0 +1,18 @@
+# Ignore Python virtual environments
+.venv/
+__pycache__/
+
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# VSCode, JetBrains, etc.
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+
+# Uploads and temp
+temp_uploads/

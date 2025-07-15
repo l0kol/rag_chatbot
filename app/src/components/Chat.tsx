@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { getAgentStatus } from "../api/AgentApi";
 
 type Message = {
@@ -12,6 +12,7 @@ const Chat: React.FC<{
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
@@ -21,6 +22,7 @@ const Chat: React.FC<{
       try {
         const data = await getAgentStatus();
         setStatus(data);
+        setInitialLoading(false);
       } catch (error) {
         console.error("Error fetching agent status:", error);
         setStatus("Error fetching status");
@@ -78,13 +80,17 @@ const Chat: React.FC<{
       <div className="flex items-center mb-2">
         <div
           className={`h-3 w-3 rounded-full mr-2 ${
-            status === "Ready" ? "bg-green-500" : "bg-gray-400"
+            status === "Ready" ? "bg-green-400" : "bg-gray-400"
           }`}
           title={`Agent status: ${status}`}
         />
         <span className="text-sm text-gray-700">
           Agent:{" "}
-          {status === "ready" ? "Ready" : status ?? "Please upload files first"}
+          {initialLoading
+            ? "fetching agent status"
+            : status === "Ready"
+            ? "Ready"
+            : status ?? "Please upload files first"}
         </span>
       </div>
       {/* Message container */}
@@ -131,11 +137,12 @@ const Chat: React.FC<{
           onKeyDown={handleKeyPress}
           className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Ask something..."
+          disabled={status !== "Ready"}
         />
 
         <button
           onClick={handleSend}
-          disabled={loading}
+          disabled={loading || status !== "Ready"}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
           Send

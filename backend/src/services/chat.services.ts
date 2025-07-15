@@ -1,10 +1,17 @@
 import axios from "axios";
 
-export const handleQuestion = async (question: string): Promise<string> => {
-  // For now, just send question
+const AGENT_API_URL = process.env.AGENT_API_URL || "http://localhost:8000";
+
+// POST FUNCTIONS
+
+export const handleQuestion = async (
+  question: string,
+  userId: string
+): Promise<string> => {
   try {
-    const response = await axios.post("http://localhost:8000/agent/ask", {
+    const response = await axios.post(`${AGENT_API_URL}/agent/ask`, {
       question,
+      user_id: userId,
     });
 
     return response.data.answer;
@@ -14,8 +21,9 @@ export const handleQuestion = async (question: string): Promise<string> => {
   }
 };
 
-export const uploadFileToAgentFAISS = async (
-  file: Express.Multer.File
+export const uploadFileToAgentVS = async (
+  file: Express.Multer.File,
+  userId: string
 ): Promise<string> => {
   const formData = new FormData();
 
@@ -26,10 +34,11 @@ export const uploadFileToAgentFAISS = async (
   const blob = new Blob([typedArray], { type: file.mimetype });
 
   formData.append("file", blob, file.originalname);
+  formData.append("user_id", userId);
 
   try {
     const response = await axios.post(
-      "http://localhost:8000/agent/upload",
+      `${AGENT_API_URL}/agent/upload`,
       formData,
       {
         headers: {
@@ -45,12 +54,28 @@ export const uploadFileToAgentFAISS = async (
   }
 };
 
-export const getAgentDBStatus = async (): Promise<string> => {
+// GETTER FUNCTIONS
+
+export const getAgentDBStatus = async (userId: string): Promise<string> => {
   try {
-    const response = await axios.get("http://localhost:8000/agent/status");
+    const response = await axios.get(
+      `${AGENT_API_URL}/agent/status?user_id=${userId}`
+    );
     return response.data.status;
   } catch (error) {
     console.error("Error getting agent status:", error);
     throw new Error("Failed to get agent status");
+  }
+};
+
+export const getUserDocsFromDB = async (userId: string): Promise<string[]> => {
+  try {
+    const response = await axios.get(
+      `${AGENT_API_URL}/agent/user_docs?user_id=${userId}`
+    );
+    return response.data.docs;
+  } catch (error) {
+    console.error("Error getting user documents:", error);
+    throw new Error("Failed to get user documents");
   }
 };

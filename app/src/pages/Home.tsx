@@ -1,6 +1,5 @@
-import React from "react";
 import Chat from "../components/Chat";
-import Navbar from "../components/navbar";
+import Navbar from "../components/Navbar";
 import FileUpload from "../components/FileUpload";
 import { askAgent } from "../api/AgentApi";
 
