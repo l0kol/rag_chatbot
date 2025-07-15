@@ -1,34 +1,5 @@
 version: "3.8"
 services:
-  nginx-proxy:
-    image: jwilder/nginx-proxy
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-    networks:
-      - web
-
-  letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-letsencrypt
-    environment:
-      - NGINX_PROXY_CONTAINER=nginx-proxy
-      - DEFAULT_EMAIL=luka.levac@gmail.com
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./certs:/etc/nginx/certs:rw
-      - ./vhost.d:/etc/nginx/vhost.d
-      - ./html:/usr/share/nginx/html
-    depends_on:
-      - nginx-proxy
-    networks:
-      - web
   agent:
     build:
       context: .
@@ -51,9 +22,6 @@ services:
       - agent
     environment:
       AGENT_API_URL: ${AGENT_API_URL}
-      VIRTUAL_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_EMAIL: luka.levac@gmail.com
 
   frontend:
     build:
@@ -65,12 +33,3 @@ services:
       - backend
     environment:
       VITE_BACKEND_API_URL: ${VITE_BACKEND_API_URL}
-      VIRTUAL_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_EMAIL: luka.levac@gmail.com
-    networks:
-      - web
-
-networks:
-  web:
-    external: false
