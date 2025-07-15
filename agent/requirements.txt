@@ -4,3 +4,4 @@ langchain-openai
 chromadb
 langchain_chroma
 python-multipart
+pypdf

@@ -50,7 +50,6 @@ class VectorStoreManager:
                 source_files.add(source_file)
         return list(source_files)
 
-    
     def has_docs(self) -> int:
         """
         Get the number of documents in the vector store collection.
