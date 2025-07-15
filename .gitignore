@@ -10,8 +10,6 @@ dist/
 .env
 # Ignore all pdf files
 *.pdf
-# Ignore all txt files
-*.txt
 # Ignore the backend/uploads directory
 backend/uploads/
 agent/chroma_db/

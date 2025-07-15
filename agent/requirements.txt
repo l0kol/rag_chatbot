@@ -1,0 +1,6 @@
+fastapi
+langchain_community
+langchain-openai
+chromadb
+langchain_chroma
+python-multipart
