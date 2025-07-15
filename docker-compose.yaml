@@ -1,43 +1,5 @@
 version: "3.8"
 services:
-  agent:
-    build:
-      context: .
-      dockerfile: agent/Dockerfile
-    ports:
-      - "8000:8000"
-    environment:
-      CHROMA_API_KEY: ${CHROMA_API_KEY}
-      CHROMA_TENANT_NAME: ${CHROMA_TENANT_NAME}
-      CHROMA_DATABASE: ${CHROMA_DATABASE}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-
-  backend:
-    build:
-      context: .
-      dockerfile: backend/Dockerfile
-    ports:
-      - "3001:3001"
-    depends_on:
-      - agent
-    environment:
-      AGENT_API_URL: ${AGENT_API_URL}
-
-  frontend:
-    build:
-      context: .
-      dockerfile: app/Dockerfile
-    ports:
-      - "5173:80"
-    depends_on:
-      - backend
-    environment:
-      VITE_BACKEND_API_URL: ${VITE_BACKEND_API_URL}
-      VIRTUAL_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_HOST: coursly-app.lukalevac.com
-      LETSENCRYPT_EMAIL: luka.levac@gmail.com
-    networks:
-      - web
   nginx-proxy:
     image: jwilder/nginx-proxy
     container_name: nginx-proxy
@@ -67,6 +29,48 @@ services:
       - nginx-proxy
     networks:
       - web
-  networks:
-    web:
-      external: false
+  agent:
+    build:
+      context: .
+      dockerfile: agent/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      CHROMA_API_KEY: ${CHROMA_API_KEY}
+      CHROMA_TENANT_NAME: ${CHROMA_TENANT_NAME}
+      CHROMA_DATABASE: ${CHROMA_DATABASE}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - agent
+    environment:
+      AGENT_API_URL: ${AGENT_API_URL}
+      VIRTUAL_HOST: coursly-app.lukalevac.com
+      LETSENCRYPT_HOST: coursly-app.lukalevac.com
+      LETSENCRYPT_EMAIL: luka.levac@gmail.com
+
+  frontend:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    environment:
+      VITE_BACKEND_API_URL: ${VITE_BACKEND_API_URL}
+      VIRTUAL_HOST: coursly-app.lukalevac.com
+      LETSENCRYPT_HOST: coursly-app.lukalevac.com
+      LETSENCRYPT_EMAIL: luka.levac@gmail.com
+    networks:
+      - web
+
+networks:
+  web:
+    external: false
