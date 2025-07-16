@@ -14,6 +14,7 @@ const Home: React.FC = () => {
         setInitialLoading(true);
 
         const docs = await getUserDocs();
+        console.log("User documents:", docs);
 
         setHasDocs(docs.length > 0);
         setUserDocs(docs);

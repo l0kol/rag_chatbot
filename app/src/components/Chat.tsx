@@ -53,7 +53,7 @@ const Chat: React.FC<{
   }, [messages]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col flex-grow">
+    <div className="w-full max-w-4xl mx-auto flex flex-col flex-grow">
       <div className="flex items-center mb-2">
         <div
           className={`h-2 w-2 rounded-full mr-2 ${

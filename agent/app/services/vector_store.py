@@ -2,7 +2,7 @@ import os
 from langchain_chroma import Chroma
 import chromadb
 from langchain_openai import OpenAIEmbeddings
-from .loader import load_documents  # Your document loader function
+from .loader import load_documents
 from pathlib import Path
 
 class VectorStoreManager:

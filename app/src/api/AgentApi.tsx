@@ -3,6 +3,8 @@ import { getOrCreateUserId } from "../utils/user";
 const BACKEND_URL =
   import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3001/api";
 
+console.log("Backend URL:", import.meta.env.VITE_BACKEND_API_URL);
+
 export async function askAgent(question: string): Promise<string> {
   const userId = getOrCreateUserId();
   const response = await fetch(`${BACKEND_URL}/ask`, {
