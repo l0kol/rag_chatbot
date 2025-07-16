@@ -11,6 +11,15 @@ The whole app is build from 3 main parts:
 2. Backend: TypeScript server that handles communication with the RAG service.
 3. Agent: Handling of the document processing (chunking, vectorization, etc.) and question answering.
 
+## Features
+- Upload documents (PDF, TXT) for RAG processing.
+- Ask questions about the uploaded documents.
+- Uses OpenAI's GPT-4o-mini model for question answering.
+- Uses ChromaDB for vector storage and retrieval.
+- Supports multiple file uploads.
+- Vector store is tied to the user session. On refresh, the vector store is reloaded, and the user can continue asking questions about the same documents.
+
+
 ## Quick Start
 There are 2 ways to run the app. The first and the easiest is to use the Docker Compose setup, which will run all parts of the app in containers. The second way is to run each part separately.
 
@@ -32,8 +41,8 @@ There are 2 ways to run the app. The first and the easiest is to use the Docker 
 - Python (v3.8 or higher)
 - pip (Python package installer)
 #### Not required but recommended:
-- UV (Universal Virtual Environment) for Python to manage dependencies.
-- NVM (Node Version Manager) to manage Node.js versions.
+- uv (Universal Virtual Environment) for Python to manage dependencies.
+- nvm (Node Version Manager) to manage Node.js versions.
 ### Steps to Run Each Part
 1. **Frontend**: Navigate to the `app` directory and run:
    ```bash
@@ -70,3 +79,10 @@ There are 2 ways to run the app. The first and the easiest is to use the Docker 
     - Model: gpt-4o-mini
     - Embeddings: OpenAIEmbeddings
     - Vector Store: ChromaDB (used with [Chroma Cloud Client](https://docs.trychroma.com/docs))
+
+
+Future improvements:
+- Add user authentication to manage multiple users and their document sessions.
+- Multiple chat sessions for each user.
+- More file formats support (e.g., DOCX, PPTX).
+- Langchain/Langgraph support for chat history and context management.
