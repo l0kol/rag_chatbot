@@ -1,9 +1,31 @@
+import { useEffect, useState } from "react";
 import Chat from "../components/Chat";
 import Navbar from "../components/Navbar";
 import FileUpload from "../components/FileUpload";
-import { askAgent } from "../api/AgentApi";
+import { askAgent, getUserDocs } from "../api/AgentApi";
+import { useAppContext } from "../context/AppContext";
 
 const Home: React.FC = () => {
+  const { setUserDocs, setHasDocs, setInitialLoading } = useAppContext();
+
+  useEffect(() => {
+    const checkFiles = async () => {
+      try {
+        setInitialLoading(true);
+
+        const docs = await getUserDocs();
+
+        setHasDocs(docs.length > 0);
+        setUserDocs(docs);
+        setInitialLoading(false);
+      } catch (error) {
+        console.error("Error checking files:", error);
+        setHasDocs(false);
+      }
+    };
+    checkFiles();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Navbar />

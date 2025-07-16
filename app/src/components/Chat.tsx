@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { getAgentStatus } from "../api/AgentApi";
+import { useAppContext } from "../context/AppContext";
 
 type Message = {
   role: "user" | "ai";
@@ -9,50 +9,27 @@ type Message = {
 const Chat: React.FC<{
   onSend: (message: string, file?: File) => Promise<string>;
 }> = ({ onSend }) => {
+  const { hasDocs, initialLoading } = useAppContext();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [file, setFile] = useState<File | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
+
   const bottomRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const fetchStatus = async () => {
-      try {
-        const data = await getAgentStatus();
-        setStatus(data);
-        setInitialLoading(false);
-      } catch (error) {
-        console.error("Error fetching agent status:", error);
-        setStatus("Error fetching status");
-      }
-    };
-
-    fetchStatus();
-  }, []);
-
-  useEffect(() => {
-    console.log("Agent status:", status);
-  }, [status]);
 
   const handleSend = async () => {
     if (!input.trim() && !file) return;
-
-    console.log("Sending message:", input, file);
 
     const userMessage: Message = {
       role: "user",
       content: input + (file ? ` (📎 ${file.name})` : ""),
     };
 
-    console.log("User message:", userMessage);
-
     setMessages((prev) => [...prev, userMessage]);
     setLoading(true);
 
     try {
-      console.log("Calling onSend with input:", input, "and file:", file);
       const aiReply = await onSend(input, file ?? undefined);
       setMessages((prev) => [...prev, { role: "ai", content: aiReply }]);
     } catch {
@@ -79,8 +56,8 @@ const Chat: React.FC<{
     <div className="w-full max-w-2xl mx-auto flex flex-col flex-grow">
       <div className="flex items-center mb-2">
         <div
-          className={`h-3 w-3 rounded-full mr-2 ${
-            status === "Ready" ? "bg-green-400" : "bg-gray-400"
+          className={`h-2 w-2 rounded-full mr-2 ${
+            hasDocs ? "bg-green-400 animate-ping opacity-75" : "bg-gray-400"
           }`}
           title={`Agent status: ${status}`}
         />
@@ -88,15 +65,14 @@ const Chat: React.FC<{
           Agent:{" "}
           {initialLoading
             ? "fetching agent status"
-            : status === "Ready"
-            ? "Ready"
-            : status ?? "Please upload files first"}
+            : hasDocs
+            ? "Ask me about your files!"
+            : "Not ready yet"}
         </span>
       </div>
-      {/* Message container */}
       <div
         className={`flex-1 overflow-y-auto border rounded-lg p-4 bg-white shadow-sm transition-opacity scroll-smooth ${
-          status !== "Ready" ? "opacity-50 pointer-events-none" : ""
+          !hasDocs ? "opacity-50 pointer-events-none" : ""
         }`}
         style={{ maxHeight: "calc(100vh - 200px)" }}
       >
@@ -120,11 +96,11 @@ const Chat: React.FC<{
         ))}
         {loading && <div className="text-gray-500 italic">Thinking...</div>}
         <div ref={bottomRef} />
-        {status !== "Ready" && (
+        {!hasDocs && (
           <div className="flex items-center justify-center">
-            <div className="bg-white/80 text-center px-4 py-3 rounded shadow text-gray-800 text-sm">
-              The agent is not ready. Please upload a file using the button on
-              the right to activate it.
+            <div className="bg-white/80 text-center px-4 py-4 rounded shadow text-black text-sm">
+              To use the chat function, please first upload a file to agent's
+              storage.
             </div>
           </div>
         )}
@@ -136,13 +112,17 @@ const Chat: React.FC<{
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyPress}
           className="flex-1 border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Ask something..."
-          disabled={status !== "Ready"}
+          placeholder={
+            !hasDocs
+              ? "You must upload a file before chating"
+              : "Ask something..."
+          }
+          disabled={!hasDocs}
         />
 
         <button
           onClick={handleSend}
-          disabled={loading || status !== "Ready"}
+          disabled={!hasDocs}
           className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50"
         >
           Send

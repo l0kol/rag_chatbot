@@ -21,12 +21,13 @@ export async function askAgent(question: string): Promise<string> {
 
   return data.answer;
 }
-export async function uploadFileToAgent(file: File): Promise<string> {
+export async function uploadFileToAgent(files: File[]): Promise<string> {
   const userId = getOrCreateUserId();
 
   const formData = new FormData();
-  console.log("Uploading file:", file.name);
-  formData.append("file", file);
+  for (const file of files) {
+    formData.append("files", file); // key must match backend param
+  }
   formData.append("user_id", userId);
 
   const response = await fetch(`${BACKEND_URL}/upload`, {

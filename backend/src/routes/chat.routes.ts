@@ -11,7 +11,7 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/ask", askQuestionWithFile);
-router.post("/upload", upload.single("file"), uploadFile);
+router.post("/upload", upload.array("files"), uploadFile);
 router.get("/status", getAgentStatus);
 router.get("/user_docs", getUserDocs);
 

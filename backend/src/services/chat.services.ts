@@ -22,19 +22,24 @@ export const handleQuestion = async (
 };
 
 export const uploadFileToAgentVS = async (
-  file: Express.Multer.File,
+  files: Express.Multer.File[],
   userId: string
 ): Promise<string> => {
   const formData = new FormData();
 
-  // Create a Uint8Array from the Buffer to ensure it's compatible
-  const typedArray = new Uint8Array(file.buffer);
+  for (const file of files) {
+    const typedArray = new Uint8Array(file.buffer);
+    const blob = new Blob([typedArray], { type: file.mimetype });
 
-  // This is now a valid BlobPart
-  const blob = new Blob([typedArray], { type: file.mimetype });
+    formData.append("files", blob, file.originalname);
+  }
 
-  formData.append("file", blob, file.originalname);
   formData.append("user_id", userId);
+
+  console.log(
+    "Uploading files:",
+    files.map((f) => f.originalname)
+  );
 
   try {
     const response = await axios.post(

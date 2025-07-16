@@ -1,40 +1,35 @@
-import { useEffect, useState } from "react";
-import { uploadFileToAgent, getUserDocs } from "../api/AgentApi";
+import { useState } from "react";
+import { uploadFileToAgent } from "../api/AgentApi";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const FileUpload: React.FC = () => {
-  const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
+  const { userDocs, setUserDocs, hasDocs, setHasDocs, initialLoading } =
+    useAppContext();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    // Get user docs
-    const fetchUserDocs = async () => {
-      try {
-        const docs = await getUserDocs();
-        console.log("Fetched user docs:", docs);
-        setUploadedFiles(docs);
-      } catch (err: any) {
-        console.error("Failed to fetch user docs:", err);
-        setMessage("Failed to load uploaded files.");
-      }
-    };
-    fetchUserDocs();
-  }, []);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const files = event.target.files;
+    if (!files) return;
 
     setLoading(true);
-    setMessage("");
+
+    const fileList = Array.from(files);
+
     try {
-      const result = await uploadFileToAgent(file);
-      setUploadedFiles((prev) => [...prev, file.name]);
-      setMessage(result);
+      const result = await uploadFileToAgent(fileList);
+
+      setUserDocs((prev: string[]) => [
+        ...prev,
+        ...fileList.map((f) => f.name),
+      ]);
+
+      toast.success(result || "Files uploaded successfully.");
+      setHasDocs(true);
     } catch (err: any) {
-      setMessage(err.message || "Upload failed.");
+      toast.error(err.message || "Upload failed.");
     } finally {
       setLoading(false);
     }
@@ -42,12 +37,21 @@ const FileUpload: React.FC = () => {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-2">Upload Documents</h2>
+      <h2 className={`text-lg font-semibold mb-2`}>Upload Documents</h2>
       <p className="text-xs text-gray-500 mb-2">
-        You can add multiple files by uploading them one after another.
+        You can add multiple files at once or you can upload them one after
+        another.
       </p>
       <label className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50">
-        {!loading && <p className="text-sm text-white-500">Choose File(s)</p>}
+        {!loading && (
+          <p
+            className={`text-sm text-white-500 ${
+              !hasDocs ? "animate-pulse" : ""
+            }`}
+          >
+            📁 Choose File(s)
+          </p>
+        )}
         {loading && (
           <span className="flex items-center gap-2">
             <svg
@@ -66,7 +70,7 @@ const FileUpload: React.FC = () => {
                 fill="currentFill"
               />
             </svg>
-            <span> Loading</span>
+            <span> Uploading </span>
           </span>
         )}
         <input
@@ -74,18 +78,18 @@ const FileUpload: React.FC = () => {
           accept=".txt,.pdf"
           onChange={handleFileChange}
           className="hidden"
+          multiple
         />
       </label>
-
-      {message && <p className="text-sm text-green-600">{message}</p>}
-
       <div className="mt-4">
         <hr className="my-2 border-gray-300" />
         <h3 className="text-sm font-medium mb-1">Uploaded Files</h3>
         <ul className="text-sm list-disc list-inside text-gray-700">
-          {uploadedFiles.map((filename, i) => (
-            <li key={i}>{filename}</li>
-          ))}
+          {initialLoading ? (
+            <li className="italic text-gray-400">Loading files...</li>
+          ) : (
+            userDocs.map((filename, i) => <li key={i}>{filename}</li>)
+          )}
         </ul>
       </div>
     </div>

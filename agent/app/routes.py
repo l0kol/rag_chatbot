@@ -4,11 +4,11 @@ from app.services.qa_chain import get_qa_chain
 from .services.vector_store import VectorStoreManager
 from pathlib import Path
 import os
+from typing import List
 
 import shutil
 
 BASE_DIR = Path(__file__).resolve().parents[1]
-filepath = BASE_DIR / "data" / "books" / "CountOfMonteChristo.txt"
 
 qa = None
 upload_dir = BASE_DIR / "temp_uploads"
@@ -31,16 +31,22 @@ async def ask(req: AskRequest):
 
 
 @router.post("/upload")
-async def upload_file(file: UploadFile = File(...), user_id: str = Form(...)):
+async def upload_file(files: List[UploadFile] = File(...), user_id: str = Form(...)):
     os.makedirs(upload_dir, exist_ok=True)
-    file_path = upload_dir / file.filename
+    
+    stored_files = []
 
-    with open(file_path, "wb") as out_file:
-        shutil.copyfileobj(file.file, out_file)
+    for file in files:
+        file_path = upload_dir / file.filename
 
-    # Build and update vectorstore
-    vector_store = VectorStoreManager(user_id=user_id)
-    vector_store.build_vectorstore_from_file(str(file_path))
+        with open(file_path, "wb") as out_file:
+            shutil.copyfileobj(file.file, out_file)
+
+        # Build and update vectorstore
+        vector_store = VectorStoreManager(user_id=user_id)
+        vector_store.build_vectorstore_from_file(str(file_path))
+
+        stored_files.append(file.filename)
 
     return {"message": f"{file.filename} processed and added for user {user_id}."}
 

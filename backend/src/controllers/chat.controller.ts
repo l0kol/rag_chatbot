@@ -27,16 +27,15 @@ export const askQuestionWithFile = async (req: Request, res: Response) => {
 
 export const uploadFile = async (req: Request, res: Response) => {
   const userId = req.body.user_id;
-
-  if (!req.file || !userId) {
+  const files = req.files as Express.Multer.File[];
+  if (!files || !userId) {
     return res.status(400).json({ error: "File and user_id are required" });
   }
 
   try {
-    const file = req.file;
-    console.log("Received file:", file.originalname, "from user:", userId);
+    console.log(`Received ${files.length} files from user: ${userId}`);
 
-    const result = await uploadFileToAgentVS(file, userId);
+    const result = await uploadFileToAgentVS(files, userId);
     res.json({ message: result });
   } catch (err) {
     console.error("uploadFile error:", err);
