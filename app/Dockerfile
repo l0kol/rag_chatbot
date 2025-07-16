@@ -7,6 +7,10 @@ COPY app/package*.json ./
 RUN npm install
 
 COPY app/ .
+
+ARG VITE_BACKEND_API_URL
+RUN echo "VITE_BACKEND_API_URL=${VITE_BACKEND_API_URL}" > .env
+
 RUN npm run build
 
 # Serve static files with nginx

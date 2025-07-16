@@ -5,12 +5,6 @@ from langchain_openai import OpenAIEmbeddings
 from .loader import load_documents  # Your document loader function
 from pathlib import Path
 
-
-COLLECTION_NAME = "example_collection"
-
-# Shared embedding function
-
-
 class VectorStoreManager:
     def __init__(self, user_id: str, base_collection: str = "example_collection"):
         self.client = self._create_client()

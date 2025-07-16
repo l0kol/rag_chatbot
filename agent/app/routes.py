@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from app.services.qa_chain import get_qa_chain
 from .services.vector_store import VectorStoreManager
 from pathlib import Path
+import os
 
 import shutil
 
@@ -31,6 +32,7 @@ async def ask(req: AskRequest):
 
 @router.post("/upload")
 async def upload_file(file: UploadFile = File(...), user_id: str = Form(...)):
+    os.makedirs(upload_dir, exist_ok=True)
     file_path = upload_dir / file.filename
 
     with open(file_path, "wb") as out_file:
