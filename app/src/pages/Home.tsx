@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Chat from "../components/Chat";
 import Navbar from "../components/Navbar";
 import FileUpload from "../components/FileUpload";
