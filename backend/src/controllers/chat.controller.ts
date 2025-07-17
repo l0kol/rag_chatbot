@@ -4,6 +4,7 @@ import {
   uploadFileToAgentVS,
   getAgentDBStatus,
   getUserDocsFromDB,
+  deleteUserChromaCollection,
 } from "../services/chat.services";
 
 export const askQuestionWithFile = async (req: Request, res: Response) => {
@@ -71,5 +72,21 @@ export const getUserDocs = async (req: Request, res: Response) => {
   } catch (err) {
     console.error("getUserDocs error:", err);
     res.status(500).json({ error: "Failed to get user documents" });
+  }
+};
+
+export const deleteUserDocs = async (req: Request, res: Response) => {
+  try {
+    const userId = req.query.user_id as string;
+    if (!userId) {
+      return res.status(400).json({ error: "user_id is required" });
+    }
+
+    const result = await deleteUserChromaCollection(userId);
+
+    res.json({ message: "User documents deleted successfully" });
+  } catch (err) {
+    console.error("deleteUserDocs error:", err);
+    res.status(500).json({ error: "Failed to delete user documents" });
   }
 };

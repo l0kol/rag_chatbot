@@ -81,3 +81,18 @@ export async function getUserDocs(): Promise<string[]> {
   const data = await response.json();
   return data.docs || [];
 }
+
+export async function deleteUserDocs(): Promise<string> {
+  const userId = getOrCreateUserId();
+
+  const response = await fetch(`${BACKEND_URL}/delete_docs?user_id=${userId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete user documents");
+  }
+
+  const data = await response.json();
+  return data.message || "Documents deleted successfully";
+}

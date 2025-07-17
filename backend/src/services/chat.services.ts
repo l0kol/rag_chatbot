@@ -59,6 +59,20 @@ export const uploadFileToAgentVS = async (
   }
 };
 
+export const deleteUserChromaCollection = async (
+  userId: string
+): Promise<string> => {
+  try {
+    const response = await axios.delete(`${AGENT_API_URL}/agent/delete_docs`, {
+      params: { user_id: userId }, // <-- send as query param
+    });
+    return response.data.message;
+  } catch (error) {
+    console.error("Error deleting user documents:", error);
+    throw new Error("Failed to delete user documents");
+  }
+};
+
 // GETTER FUNCTIONS
 
 export const getAgentDBStatus = async (userId: string): Promise<string> => {

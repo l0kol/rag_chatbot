@@ -6,6 +6,11 @@ from .loader import load_documents
 from pathlib import Path
 
 class VectorStoreManager:
+    '''
+    Manages user-specific vector store collections using ChromaDB and OpenAI embeddings.
+    This class provides methods to create, load, and manage a vector store collection for a given user.
+    It supports adding documents from files, retrieving metadata, and checking collection contents.
+    '''
     def __init__(self, user_id: str, base_collection: str = "example_collection"):
         self.client = self._create_client()
         self.embeddings = OpenAIEmbeddings(
@@ -54,6 +59,9 @@ class VectorStoreManager:
         return len(ids) > 0
 
     def build_vectorstore_from_file(self, txt_file_path: str) -> Chroma:
+        """
+        Builds a vector store from a given text file by loading its documents and adding them to the vector store.
+        """
         try:
             documents = load_documents(txt_file_path)
             self.vector_store.add_documents(documents)
@@ -66,3 +74,14 @@ class VectorStoreManager:
                     print(f"Deleted temporary file: {file_path}")
             except Exception as e:
                 print(f"Error deleting file {txt_file_path}: {e}")
+
+    def delete_vectorstore(self) -> None:
+        """
+        Deletes the vector store collection for the user.
+        """
+        try:
+            self.client.delete_collection(self.collection_name)
+            print(f"Deleted collection: {self.collection_name}")
+            return True
+        except Exception as e:
+            print(f"Error deleting collection {self.collection_name}: {e}")

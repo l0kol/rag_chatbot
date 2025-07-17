@@ -6,7 +6,7 @@ from pathlib import Path
 
 def build_loader(path: str):
     """
-    Factory function to create a document loader based on file type.
+    Function to create a document loader based on file type.
     Supports .txt and .pdf files.
     """
     suffix = Path(path).suffix.lower()
@@ -19,6 +19,14 @@ def build_loader(path: str):
 
 
 def load_documents(path: str) -> list[Document]:
+    """
+    Loads documents, annotates each document's metadata with the source file name,
+    and splits the documents into smaller chunks using a recursive character text splitter.
+    Args:
+        path (str): The file path from which to load the documents.
+    Returns:
+        list[Document]: A list of split Document objects.
+    """
     loader = build_loader(path)
     docs = loader.load()
 

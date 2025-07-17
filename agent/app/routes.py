@@ -9,9 +9,9 @@ from typing import List
 import shutil
 
 BASE_DIR = Path(__file__).resolve().parents[1]
+upload_dir = BASE_DIR / "temp_uploads"
 
 qa = None
-upload_dir = BASE_DIR / "temp_uploads"
 
 router = APIRouter()
 
@@ -27,8 +27,6 @@ async def ask(req: AskRequest):
         return {"answer": result["answer"]}
     except Exception as e:
         return {"answer": f"Error: {str(e)}"}
-
-
 
 @router.post("/upload")
 async def upload_file(files: List[UploadFile] = File(...), user_id: str = Form(...)):
@@ -50,8 +48,6 @@ async def upload_file(files: List[UploadFile] = File(...), user_id: str = Form(.
 
     return {"message": f"{file.filename} processed and added for user {user_id}."}
 
-
-
 @router.get("/status")
 async def status(user_id: str):
     return {"status": "Ready"}
@@ -63,5 +59,15 @@ async def user_docs(user_id: str):
         vsm = VectorStoreManager(user_id=user_id)
         docs = vsm.get_collection_source_files()
         return {"docs": docs}
+    except Exception as e:
+        return {"error": str(e)}
+    
+@router.delete("/delete_docs")
+async def delete_docs(user_id: str):
+    try:
+        print(f"Deleting vector store for user_id: {user_id}")
+        vsm = VectorStoreManager(user_id=user_id)
+        vsm.delete_vectorstore()
+        return {"message": "Vector store deleted successfully."}
     except Exception as e:
         return {"error": str(e)}
