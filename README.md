@@ -18,6 +18,7 @@ The whole app is build from 3 main parts:
 - Uses ChromaDB for vector storage and retrieval.
 - Supports multiple file uploads.
 - Vector store is tied to the user session. On refresh, the vector store is reloaded, and the user can continue asking questions about the same documents.
+- Users can delete their uploaded documents and start a new session.
 
 
 ## Quick Start
