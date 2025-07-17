@@ -5,12 +5,18 @@ const BACKEND_URL =
 
 console.log("Backend URL:", import.meta.env.VITE_BACKEND_API_URL);
 
+/**
+ * API functions to interact with the agent backend.
+ * These functions handle asking questions, uploading files, checking status,
+ * and managing user documents.
+ */
+
 export async function askAgent(question: string): Promise<string> {
   const userId = getOrCreateUserId();
   const response = await fetch(`${BACKEND_URL}/ask`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json", // ← This makes req.body work
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ question, user_id: userId }),
   });
@@ -28,7 +34,7 @@ export async function uploadFileToAgent(files: File[]): Promise<string> {
 
   const formData = new FormData();
   for (const file of files) {
-    formData.append("files", file); // key must match backend param
+    formData.append("files", file);
   }
   formData.append("user_id", userId);
 

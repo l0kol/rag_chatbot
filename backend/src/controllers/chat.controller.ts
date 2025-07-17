@@ -7,6 +7,12 @@ import {
   deleteUserChromaCollection,
 } from "../services/chat.services";
 
+/**
+ * Controller functions for handling chat-related requests.
+ * These functions handle asking questions, uploading files,
+ * checking agent status, and managing user documents.
+ */
+
 export const askQuestionWithFile = async (req: Request, res: Response) => {
   const question = req.body.question;
   const userId = req.body.user_id;
@@ -16,8 +22,6 @@ export const askQuestionWithFile = async (req: Request, res: Response) => {
   }
 
   try {
-    console.log("Received question:", question);
-
     const answer = await handleQuestion(question, userId);
     res.json({ answer });
   } catch (err) {
@@ -34,8 +38,6 @@ export const uploadFile = async (req: Request, res: Response) => {
   }
 
   try {
-    console.log(`Received ${files.length} files from user: ${userId}`);
-
     const result = await uploadFileToAgentVS(files, userId);
     res.json({ message: result });
   } catch (err) {

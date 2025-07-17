@@ -11,15 +11,11 @@ def get_user_retriever(user_id: str):
 def get_qa_chain(user_id: str):
     """
     Creates and returns a retrieval-based QA (Question Answering) chain.
-    This function initializes a retriever for the given user, sets up a language model (LLM),
-    loads a retrieval QA chat prompt from the LangChain hub, and combines these components
-    into a retrieval QA chain that can be used to answer questions based on user-specific data.
     Args:
         user_id (str): The unique identifier of the user for whom the QA chain is being created.
     Returns:
         RetrievalChain: A configured retrieval QA chain instance for the specified user.
     """
-    print(f"Creating QA chain for user: {user_id}")
     retriever = get_user_retriever(user_id)
 
     llm = ChatOpenAI(model="gpt-4o-mini")

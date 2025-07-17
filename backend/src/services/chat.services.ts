@@ -2,6 +2,10 @@ import axios from "axios";
 
 const AGENT_API_URL = process.env.AGENT_API_URL || "http://localhost:8000";
 
+/**
+ * API functions to interact with the RAG agent backend.
+ */
+
 // POST FUNCTIONS
 
 export const handleQuestion = async (
@@ -59,12 +63,14 @@ export const uploadFileToAgentVS = async (
   }
 };
 
+// DELETE FUNCTIONS
+
 export const deleteUserChromaCollection = async (
   userId: string
 ): Promise<string> => {
   try {
     const response = await axios.delete(`${AGENT_API_URL}/agent/delete_docs`, {
-      params: { user_id: userId }, // <-- send as query param
+      params: { user_id: userId },
     });
     return response.data.message;
   } catch (error) {

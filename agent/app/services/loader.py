@@ -8,6 +8,10 @@ def build_loader(path: str):
     """
     Function to create a document loader based on file type.
     Supports .txt and .pdf files.
+    Args:
+        path (str): The file path to load.
+    Returns:
+        DocumentLoader: An instance of a document loader for the specified file type.
     """
     suffix = Path(path).suffix.lower()
     if suffix == ".txt":
