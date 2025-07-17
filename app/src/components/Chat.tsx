@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import { useAppContext } from "../context/AppContext";
 
 type Message = {
@@ -51,6 +51,12 @@ const Chat: React.FC<{
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (!hasDocs) {
+      setMessages([]);
+    }
+  }, [hasDocs]);
 
   return (
     <div className="w-full max-w-4xl mx-auto flex flex-col flex-grow">
