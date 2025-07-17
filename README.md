@@ -85,5 +85,6 @@ There are 2 ways to run the app. The first and the easiest is to use the Docker 
 Future improvements:
 - Add user authentication to manage multiple users and their document sessions.
 - Multiple chat sessions for each user.
+- Save chat history and context for each user.
 - More file formats support (e.g., DOCX, PPTX).
 - Langchain/Langgraph support for chat history and context management.
