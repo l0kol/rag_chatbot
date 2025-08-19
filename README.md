@@ -2,8 +2,6 @@
 
 This is a basic RAG (Retrieval-Augmented Generation) chatbot built with React, TypeScript, and LangChain. It allows users to upload documents, which are then processed and indexed for question answering.
 
-Live app demo: [RAG Chat](http://134.199.190.229:5173//)
-
 ![Screenshot of RAG Chatbot](assets/Screenshot.png)
 
 The whole app is build from 3 main parts:
